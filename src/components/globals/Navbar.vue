@@ -2,6 +2,7 @@
 import {  onMounted, ref, watchEffect } from "vue";
 import { useAuthStore } from "../../stores/auth";
 import { useCartStore } from "../../stores/cart";
+import { useProfileStore } from "../../stores/profile";
 const menus = [
     { path: "/", label: "Home" },
     { path: "/product", label: "Product" },
@@ -10,8 +11,11 @@ const menus = [
 
 ];
 const cartStore = useCartStore();
-const isMobile = ref(false);
+const profileStore = useProfileStore()
 const auth = useAuthStore()
+
+const isMobile = ref(false);
+
 function isMobileToggle() {
     isMobile.value = !isMobile.value;
 }
@@ -19,6 +23,8 @@ onMounted(async()=>{
     if(cartStore.cartCound == 0){
         await cartStore.getCart()
     }
+    await profileStore.getProfile()
+    console.log(profileStore.profile)
 })
 
 </script>
@@ -34,10 +40,10 @@ onMounted(async()=>{
                 </li>
             </ul>
             <div class="flex justify-center items-center gap-3">
-                <router-link v-if="auth.token" to="/">
+                <router-link v-if="auth.token" to="/users/profile">
                     <div
-                        class="p-2 rounded-md hover:bg-secondary-color hover:text-white transition-all ease-in-out duration-100">
-                       <img class="w-7 h-7 overflow-hidden rounded-full" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="">
+                        class=" rounded-full p-1 hover:bg-secondary-color hover:text-white transition-all ease-in-out duration-100">
+                       <img class="w-7 h-7 overflow-hidden rounded-full" :src=" profileStore.profile?.user?.avatar   || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'" alt="">
                         
                     </div>
                 </router-link>
@@ -53,7 +59,7 @@ onMounted(async()=>{
                             <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12">
                             </path>
                         </svg>
-                        <p class="absolute top-0 right-0 bg-red-600  flex justify-center items-center text-white w-4  h-4 text-sm rounded-full">{{ cartStore.cartCound }}</p>
+                        <p v-if="cartStore.cartCound !=0" class="absolute top-0 right-0 bg-red-600  flex justify-center items-center text-white w-4  h-4 text-sm rounded-full">{{ cartStore.cartCound }}</p>
                     </div>
                 </router-link>
                 <router-link to="/auth/login">

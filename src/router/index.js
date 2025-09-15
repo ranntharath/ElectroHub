@@ -10,6 +10,15 @@ import Register from "../page/auth/register.vue";
 import AuthLayout from "../layouts/AuthLayout.vue";
 
 const routes = [
+    {
+    path: "/auth",
+    component: AuthLayout,
+    children: [
+      { path: "login", name: "Login", component: Login },
+      { path: "register", name: "Registe", component: Register },
+    ],
+  },
+  {path:"/users/profile", name:"UserProfile", component: ()=>import('../page/user/Profile.vue')},
   {
     path: "/",
     component: MainLayout,
@@ -34,14 +43,8 @@ const routes = [
       { path: "cart", name: "ShoppingCart", component: ShoppingCart },
     ],
   },
-  {
-    path: "/auth",
-    component: AuthLayout,
-    children: [
-      { path: "login", name: "Login", component: Login },
-      { path: "register", name: "Registe", component: Register },
-    ],
-  },
+
+
 
   { path: "/:PathMatch(.*)*", component: NotFoundPage },
 ];
