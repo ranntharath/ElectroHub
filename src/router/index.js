@@ -8,7 +8,14 @@ import ShoppingCart from "../page/user/ShoppingCart.vue";
 import Login from "../page/auth/Login.vue";
 import Register from "../page/auth/register.vue";
 import AuthLayout from "../layouts/AuthLayout.vue";
+import { useAuthStore } from "../stores/auth";
+import { useToast } from "vue-toastification";
+import AdminLayout from "../layouts/AdminLayout.vue";
+import User from "../page/admin/User.vue";
+import Order from "../page/admin/Order.vue";
+import Dashboard from "../page/admin/dashboard.vue";
 
+const toast = useToast()
 const routes = [
     {
     path: "/auth",
@@ -43,6 +50,15 @@ const routes = [
       { path: "cart", name: "ShoppingCart", component: ShoppingCart },
     ],
   },
+    {
+    path: '/admin',
+    component: AdminLayout,
+    children: [
+      { path: '', name: 'Dashboard', component: Dashboard },
+      { path: 'users', name: 'Users', component: User },
+      { path: 'orders', name: 'Orders', component: Order }
+    ],
+  },
 
 
 
@@ -58,19 +74,22 @@ const router = createRouter({
   },
 });
 
-// router.beforeEach((to, from, next) => {
-//   const auth = useAuthStore()
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore()
+  const isLoggedIn = authStore.token  // or however your store tracks login
 
-//   // Check login
-//   if (to.meta.requiresAuth && !auth.token) {
-//     return next({ name: "Home" })
-//   }
+  // If user is logged in and tries to access auth pages
+  if (isLoggedIn && to.path.startsWith("/auth")) {
+    return next({ path: "/" }) // redirect to home
+  }
 
-//   // Check admin
-//   if (to.meta.requiresAdmin && auth.user?.role !== "admin") {
-//     return next({ name: "Home" })
-//   }
-
-//   next()
-// })
+  // If user is not logged in and tries to access protected routes
+  const protectedPaths = ["/users/profile", "/cart"] 
+  if (!isLoggedIn && protectedPaths.includes(to.path)) {
+   toast.warning("You must login first")
+  if (from.path === "/") return next({ path: "/" }) // no previous route
+  return next(false)
+  }
+  next()
+})
 export default router;

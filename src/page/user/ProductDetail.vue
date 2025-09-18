@@ -60,7 +60,7 @@ const related = computed(() => {
 <template>
 
 
-  <div class="min-h-screen bg-gray-50">
+  <div v-if="!prodctStore.isGetProductById" class="min-h-screen bg-gray-50">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
         <!-- Product Gallery -->
@@ -220,4 +220,54 @@ const related = computed(() => {
       </div>
     </div>
   </div>
+
+  
+   <div v-if="prodctStore.isGetProductById" class="min-h-screen bg-gray-50 animate-pulse">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+        <!-- Left image skeleton -->
+        <div class="space-y-4">
+          <div class="bg-white rounded-2xl shadow-sm p-4">
+            <div class="w-full aspect-square bg-gray-200 rounded-xl"></div>
+          </div>
+          <div class="mt-4 grid grid-cols-4 gap-3">
+            <div
+              v-for="i in 4"
+              :key="i"
+              class="h-20 w-full bg-gray-200 rounded-xl"
+            ></div>
+          </div>
+        </div>
+
+        <!-- Right info skeleton -->
+        <div class="space-y-6 text-color-text">
+          <div class="h-6 bg-gray-200 rounded w-1/3"></div>
+          <div class="h-8 bg-gray-200 rounded w-3/4"></div>
+          <div class="h-4 bg-gray-200 rounded w-full"></div>
+          <div class="h-4 bg-gray-200 rounded w-5/6"></div>
+          <div class="h-4 bg-gray-200 rounded w-2/3"></div>
+          <div class="flex gap-3 mt-4">
+            <div class="h-10 bg-gray-200 rounded w-1/2"></div>
+            <div class="h-10 bg-gray-200 rounded w-1/3"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Related products skeleton -->
+      <div class="mt-16">
+        <div class="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
+        <div
+          class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5"
+        >
+          <div
+            v-for="i in 5"
+            :key="i"
+            class="h-60 bg-gray-200 rounded-xl"
+          ></div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
+
+

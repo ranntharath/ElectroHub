@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
 import { useCartStore } from "../../stores/cart";
+import { useToast } from "vue-toastification";
 
 const props = defineProps({
   id: String,
@@ -19,6 +20,7 @@ const emit = defineEmits(["update:removeCart"]);
 const cartStore = useCartStore();
 const quantity = ref(props.qty);
 
+const toast = useToast();
 
 function increseQty() {
   quantity.value++;
@@ -31,9 +33,11 @@ function decreaseQty() {
 
 watch(
   () => quantity.value,
-  (newVal) => {
-    console.log(quantity.value, props.productId, newVal);
-    cartStore.updateQty(props.productId, newVal);
+  async (newVal) => {
+    await cartStore.updateQty(props.productId, newVal);
+    if (cartStore.updateError) {
+      toast.error(cartStore.updateError);
+    }
   }
 );
 </script>

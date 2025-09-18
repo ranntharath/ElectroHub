@@ -15,6 +15,10 @@ export const useProfileStore = defineStore('profile',()=>{
 
 
     async function getProfile() {
+        if (!auth.token) {
+      
+      return;
+    }
         isLoading.value = true;
         error.value = null;
 

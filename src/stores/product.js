@@ -7,7 +7,11 @@ export const useProductStore = defineStore('product', ()=>{
 
     const auth = useAuthStore()
     const response = ref({})
+
     const isLoading = ref(true)
+    const isGetProductById = ref(false)
+
+    const errorGetProductById = ref(null)
     const isError = ref(null)
 
 
@@ -27,16 +31,16 @@ export const useProductStore = defineStore('product', ()=>{
     }
 
     async function getProductById(id){
-        isLoading.value = true
-        isError.value = null
+        isGetProductById.value = true
+        errorGetProductById.value = null
 
         try{
             const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/products/${id}`)
             return res.data
         }catch(err){
-            isError.value = err.error || "Failed to fetch products"
+            errorGetProductById.value = err.error || "Failed to fetch products"
         }finally{
-            isLoading.value = false
+            isGetProductById.value = false
         }
         
     }
@@ -56,5 +60,5 @@ export const useProductStore = defineStore('product', ()=>{
             isLoading.value = false
         }
     }
-    return {isError,isLoading,response,getAllProduct,getProductById, addNewProduct}
+    return {isError,isLoading,response,getAllProduct,getProductById, addNewProduct, isGetProductById,errorGetProductById}
 })

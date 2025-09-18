@@ -1,9 +1,10 @@
 <script setup>
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import CartProduct from "../../components/CartPageComponents/cartProduct.vue";
 import { useCartStore } from "../../stores/cart";
 import { useOrderStore } from "../../stores/order";
 import { useToast } from "vue-toastification";
+
 const toast = useToast();
 const cartStore = useCartStore();
 const orderStore = useOrderStore();
@@ -20,9 +21,12 @@ const orderData = ref({
   items: [],
 });
 
-onMounted(async () => {
-  getUserCart.value = await cartStore.getCart();
-});
+
+watch(()=>cartStore.cartData, async ()=>{
+  getUserCart.value = await cartStore.getCart()
+},{
+  immediate:true
+})
 const carts = computed(() => getUserCart.value?.cart?.items);
 
 async function HandlecreateOrder(e) {
@@ -33,8 +37,7 @@ async function HandlecreateOrder(e) {
       orderData.value.items = order.order.items;
       orderData.value.totalAmount = order.order.totalAmount;
       const send = await orderStore.sendOrder(orderData.value);
-      if (send) {
-        console.log(send);
+      if (send) { 
         toast.success("Sent to email", { timeout: 2000 });
       }
       setTimeout(() => {
@@ -123,7 +126,7 @@ async function HandlecreateOrder(e) {
         <hr class="text-slate-300" />
         <div class="flex justify-between items-center">
           <h3 class="text-xl font-bold">Total</h3>
-          <h3 class="text-xl font-bold text-primary-color">$325</h3>
+          <h3 class="text-xl font-bold text-primary-color">${{ getUserCart?.cart?.total }}</h3>
         </div>
         <form class="space-y-4">
           <input

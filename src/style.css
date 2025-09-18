@@ -20,8 +20,5 @@
 h2{
   font-size: 36px;
 }
-.router-link-exact-active{
-    @apply text-primary-color
-}
 
 

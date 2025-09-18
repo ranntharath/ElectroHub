@@ -7,7 +7,7 @@ const props = defineProps(['quantity','id'])
 const emit = defineEmits(['update:quantity'])
 const quantity = ref(props.quantity);
 
-const cartStore = useCartStore()
+
 
 function increseQty() {
   quantity.value++;

@@ -2,7 +2,7 @@
 import {  onMounted, ref, watchEffect } from "vue";
 import { useAuthStore } from "../../stores/auth";
 import { useCartStore } from "../../stores/cart";
-import { useProfileStore } from "../../stores/profile";
+import { useProfileStore } from "../../stores/profile"
 const menus = [
     { path: "/", label: "Home" },
     { path: "/product", label: "Product" },
@@ -24,15 +24,18 @@ onMounted(async()=>{
         await cartStore.getCart()
     }
     await profileStore.getProfile()
-    console.log(profileStore.profile)
 })
 
 </script>
 <template>
     <nav class="sticky top-0 z-50 bg-white/20 backdrop-blur-md shadow-md">
         <div class="flex justify-between items-center py-2 md:py-4 px-4 sm:px-10 md:px-16 lg:px-[120px]">
-            <router-link to="/">
-                <h1 class="text-2xl font-bold text-primary-color">ElectroHub</h1>
+            <router-link to="/" class="flex gap-3  items-center">
+                <div class="w-9 ">
+                    <img src='../../assets/electrohub.png' alt="logo" class="scale-200 rounded-full overflow-hidden" >
+                </div>
+                
+                <h1 class="text-xl font-bold text-primary-color">ElectroHub</h1>
             </router-link>
             <ul class="hidden md:flex justify-center items-center gap-5 text-color-text">
                 <li @click="isMobile = false" class="hover:text-primary-color cursor-pointer font-semibold " v-for="menu in menus">
@@ -90,3 +93,9 @@ onMounted(async()=>{
         </div>
     </nav>
 </template>
+
+<style>
+.router-link-exact-active{
+    color: #0b6902 ;
+}
+</style>

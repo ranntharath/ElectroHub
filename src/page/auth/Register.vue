@@ -2,16 +2,25 @@
 import { ref, watch, watchEffect } from 'vue';
 import { useAuthStore } from '../../stores/auth';
 import { useRouter } from 'vue-router';
+import { useToast } from 'vue-toastification';
   const submit = useAuthStore()
   const route = useRouter()
+  const toast = useToast()
   const userData = ref({
     name:"",
     email:"",
-    password:""
+    password:"",
+    cPassword: ""
   })
   async function handleSubmit(e){
     e.preventDefault()
     try{
+      if(userData.value.password != userData.value.cPassword){
+        toast.error("Comfirm password not match", {timeout:2000})
+        
+        return
+      }
+      
         const register =  await submit.register(userData.value)
         userData.value = {name:"", email:"", password: ""}
         if(register){
@@ -94,6 +103,32 @@ import { useRouter } from 'vue-router';
           </div>
         </div>
 
+        <div>
+          <label for="cpassword" class="block text-sm font-medium text-gray-700 mb-2">
+            Comfirm Password
+          </label>
+          <div class="relative">
+            <input
+              id="cpassword"
+              name="cpassword"
+              type="password"
+              v-model="userData.cPassword"
+              placeholder="Password"
+              autocomplete="new-password"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg outline-0 focus:ring-2 focus:ring-primary-color focus:border-primary-color transition-colors duration-200 text-gray-900 placeholder-gray-500 pr-12"
+            />
+            <button
+              type="button"
+              class="absolute inset-y-0 right-0 pr-3 flex items-center"
+            >
+              <svg class="h-5 w-5 text-gray-400 hover:text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
         
 
         <!-- Create Account Button -->
@@ -108,9 +143,9 @@ import { useRouter } from 'vue-router';
         <div class="text-center">
           <p class="text-sm text-gray-600">
             Already have an account? 
-            <a href="#" class="text-primary-color hover:text-orange-600 font-medium transition-colors duration-200">
+            <router-link to="/auth/login" class="text-primary-color hover:text-orange-600 font-medium transition-colors duration-200">
               Sign in
-            </a>
+            </router-link>
           </p>
         </div>
       </form>

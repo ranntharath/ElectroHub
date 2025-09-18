@@ -94,9 +94,9 @@ import { useRouter } from 'vue-router';
         <div class="text-center">
           <p class="text-sm text-gray-600">
             Create an account? 
-            <a href="#" class="text-primary-color hover:text-orange-600 font-medium transition-colors duration-200">
+            <router-link to="/auth/register" class="text-primary-color hover:text-orange-600 font-medium transition-colors duration-200">
               Register
-            </a>
+            </router-link>
           </p>
         </div>
       </form>

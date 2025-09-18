@@ -1,9 +1,11 @@
 <script setup>
 import { onMounted, ref, watch } from "vue";
 import { useProfileStore } from "../../stores/profile";
+import { useAuthStore } from "../../stores/auth";
+import { useRouter } from "vue-router";
 
 const avatarError = ref(false);
-
+const router = useRouter()
 const roleColors = {
   admin: "bg-red-500",
   user: "bg-blue-500",
@@ -20,33 +22,38 @@ const profileData = ref({
   phone: "",
   avatar: "",
 });
-watch(()=>isEditProfile.value,async () => {
-  profile.value = await profileStore.getProfile();
-  if (profile.value) {
-    profileData.value.name = profile.value?.user?.name;
-    profileData.value.phone = profile.value?.user?.phone;
-    profileData.value.avatar = profile.value?.user?.avatar;
-    
+onMounted(
+ 
+  async () => {
+    profile.value = await profileStore.getProfile();
+    if (profile.value) {
+      profileData.value.name = profile.value?.user?.name;
+      profileData.value.phone = profile.value?.user?.phone;
+      profileData.value.avatar = profile.value?.user?.avatar;
+    }
   }
-  console.log(profile.value)
-},{immediate:true});
+);
 
 async function handleUpdateProfile(e) {
-  try{
-    const update = await profileStore.updateProfile(profileData.value)
-    if(!update){
+  try {
+    const update = await profileStore.updateProfile(profileData.value);
+    if (!update) {
       console.log("something went wrong");
     }
     window.location.reload();
-  }catch(err){
-    console.log(err)
+  } catch (err) {
+    console.log(err);
   }
-
+}
+function logout(){
+  const authStore = useAuthStore()
+  authStore.logout()
+  router.push("/")
 }
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-100 py-10">
+  <div v-if="!profileStore.isLoading" class="min-h-screen bg-gray-100 py-10">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
       <!-- Profile Card -->
       <div
@@ -69,7 +76,7 @@ async function handleUpdateProfile(e) {
           <div class="flex justify-center -mt-16 mb-4">
             <div class="relative">
               <img
-                v-if="!avatarError"
+               
                 :src="
                   profile?.user?.avatar ||
                   'https://www.google.com/url?sa=i&url=https%3A%2F%2Favatar-placeholder.iran.liara.run%2F&psig=AOvVaw3AsoqOzv4C9CUPnRjZ5gBA&ust=1757944702976000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCJCEg8C02I8DFQAAAAAdAAAAABAE'
@@ -78,17 +85,7 @@ async function handleUpdateProfile(e) {
                 @error="avatarError = true"
                 class="w-24 h-24 rounded-full border-4 border-white shadow-lg object-cover"
               />
-              <div
-                v-else
-                class="w-24 h-24 rounded-full border-4 border-white shadow-lg bg-gray-300 flex items-center justify-center text-xl font-bold text-gray-500"
-              >
-                {{
-                  profile?.user?.name
-                    .split(" ")
-                    .map((n) => n[0])
-                    .join("")
-                }}
-              </div>
+              
 
               <!-- Role Badge -->
               <div class="absolute -bottom-1 -right-1">
@@ -108,13 +105,13 @@ async function handleUpdateProfile(e) {
               {{ profile?.user?.name }}
             </h2>
             <input
-                  v-if="isEditProfile"
-                  v-model="profileData.name"
-                  type="text"
-                  id="name"
-                  placeholder="Name"
-                  class="px-4 py-2 mb-2 text-center w-full rounded-lg border border-gray-300 focus:border-slate-300 focus:ring-2 focus:ring-slate-200 outline-none transition-all duration-200"
-                />
+              v-if="isEditProfile"
+              v-model="profileData.name"
+              type="text"
+              id="name"
+              placeholder="Name"
+              class="px-4 py-2 mb-2 text-center w-full rounded-lg border border-gray-300 focus:border-slate-300 focus:ring-2 focus:ring-slate-200 outline-none transition-all duration-200"
+            />
             <p class="text-gray-500 text-sm capitalize">
               {{ profile?.user?.role }} Account
             </p>
@@ -145,8 +142,9 @@ async function handleUpdateProfile(e) {
               </div>
               <div>
                 <p class="text-sm font-medium text-gray-600">Email</p>
-                <p class="text-gray-900 truncate">{{ profile?.user?.email || "Enter your email"  }}</p>
-
+                <p class="text-gray-900 truncate">
+                  {{ profile?.user?.email || "Enter your email" }}
+                </p>
               </div>
             </div>
 
@@ -173,7 +171,9 @@ async function handleUpdateProfile(e) {
               </div>
               <div>
                 <p class="text-sm font-medium text-gray-600">Phone</p>
-                <p v-if="!isEditProfile" class="text-gray-900">{{ profile?.user?.phone || "Enter your number" }}</p>
+                <p v-if="!isEditProfile" class="text-gray-900">
+                  {{ profile?.user?.phone || "Enter your number" }}
+                </p>
                 <input
                   v-if="isEditProfile"
                   v-model="profileData.phone"
@@ -212,38 +212,42 @@ async function handleUpdateProfile(e) {
                   {{ profile?.user?.role }}
                 </p>
               </div>
-              
             </div>
             <input
-                  v-if="isEditProfile"
-                  v-model="profileData.avatar"
-                  type="text"
-                  id="name"
-                  placeholder="Profile URl "
-                  class="px-4 py-2 w-full  rounded-lg border border-gray-300 focus:border-slate-300 focus:ring-2 focus:ring-slate-200 outline-none transition-all duration-200"
-                />
+              v-if="isEditProfile"
+              v-model="profileData.avatar"
+              type="text"
+              id="name"
+              placeholder="Profile URl "
+              class="px-4 py-2 w-full rounded-lg border border-gray-300 focus:border-slate-300 focus:ring-2 focus:ring-slate-200 outline-none transition-all duration-200"
+            />
           </div>
 
           <!-- Action Buttons -->
           <div class="mt-6 flex flex-col sm:flex-row gap-3">
-            <button v-if="!isEditProfile"
-              @click="isEditProfile = !isEditProfile" 
+            <button
+              v-if="!isEditProfile"
+              @click="isEditProfile = !isEditProfile"
               class="cursor-pointer flex-1 bg-primary-color text-white py-2 px-4 rounded-lg hover:bg-primary-color/90 transition-colors"
             >
               Edit Profile
-            </button> 
-            <button @click="isEditProfile = false" v-if="isEditProfile"
+            </button>
+            <button
+              @click="isEditProfile = false"
+              v-if="isEditProfile"
               class="cursor-pointer flex-1 bg-gray-200 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors"
             >
               Cancel
             </button>
             <button
-              @click="handleUpdateProfile"  v-if="isEditProfile"
+              @click="handleUpdateProfile"
+              v-if="isEditProfile"
               class="cursor-pointer flex-1 bg-primary-color text-white py-2 px-4 rounded-lg hover:bg-primary-color/90 transition-colors"
             >
               Save
             </button>
-            <button  v-if="!isEditProfile"
+            <button v-if="!isEditProfile"
+             @click="logout"
               class="cursor-pointer flex-1 bg-gray-200 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors"
             >
               Logout
@@ -253,4 +257,67 @@ async function handleUpdateProfile(e) {
       </div>
     </div>
   </div>
+
+
+  <!-- loading -->
+   <div v-else class="min-h-screen bg-gray-100 py-10">
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Profile Card Skeleton -->
+    <div class="max-w-md md:max-w-lg lg:max-w-xl mx-auto bg-white rounded-xl shadow-xl overflow-hidden">
+      <!-- Header Gradient -->
+      <div class="bg-gradient-to-r from-blue-500 to-purple-600 h-32 relative">
+        <div class="absolute top-4 right-4 w-16 h-4 bg-white bg-opacity-30 rounded-full animate-pulse"></div>
+      </div>
+
+      <!-- Profile Section -->
+      <div class="relative px-6 pb-6">
+        <!-- Avatar -->
+        <div class="flex justify-center -mt-16 mb-4">
+          <div class="relative">
+            <div class="w-24 h-24 rounded-full border-4 border-white shadow-lg bg-gray-300 animate-pulse"></div>
+            <div class="absolute -bottom-1 -right-1 w-12 h-4 bg-gray-300 rounded-full animate-pulse"></div>
+          </div>
+        </div>
+
+        <!-- User Name -->
+        <div class="text-center mb-6">
+          <div class="h-6 w-32 bg-gray-300 mx-auto rounded animate-pulse"></div>
+          <div class="h-4 w-24 bg-gray-300 mx-auto rounded mt-2 animate-pulse"></div>
+        </div>
+
+        <!-- Contact Info -->
+        <div class="space-y-3">
+          <div class="flex items-center p-4 bg-gray-50 rounded-lg shadow-sm">
+            <div class="w-10 h-10 bg-gray-300 rounded-lg animate-pulse mr-3"></div>
+            <div class="flex-1 space-y-1">
+              <div class="h-3 w-20 bg-gray-300 rounded animate-pulse"></div>
+              <div class="h-4 w-full bg-gray-300 rounded animate-pulse"></div>
+            </div>
+          </div>
+          <div class="flex items-center p-4 bg-gray-50 rounded-lg shadow-sm">
+            <div class="w-10 h-10 bg-gray-300 rounded-lg animate-pulse mr-3"></div>
+            <div class="flex-1 space-y-1">
+              <div class="h-3 w-20 bg-gray-300 rounded animate-pulse"></div>
+              <div class="h-4 w-full bg-gray-300 rounded animate-pulse"></div>
+            </div>
+          </div>
+          <div class="flex items-center p-4 bg-gray-50 rounded-lg shadow-sm">
+            <div class="w-10 h-10 bg-gray-300 rounded-lg animate-pulse mr-3"></div>
+            <div class="flex-1 space-y-1">
+              <div class="h-3 w-20 bg-gray-300 rounded animate-pulse"></div>
+              <div class="h-4 w-full bg-gray-300 rounded animate-pulse"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="mt-6 flex flex-col sm:flex-row gap-3">
+          <div class="h-10 flex-1 bg-gray-300 rounded-lg animate-pulse"></div>
+          <div class="h-10 flex-1 bg-gray-300 rounded-lg animate-pulse"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 </template>

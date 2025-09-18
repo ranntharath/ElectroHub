@@ -51,11 +51,11 @@ export const useAuthStore = defineStore('auth',()=>{
     }
 
     async function logout(){
-
         token.value = null
         localStorage.removeItem('token')
         localStorage.removeItem('user')
     }
+
     async function getMe() {
         if(!token){
             getMeError.value = "not login yet"
