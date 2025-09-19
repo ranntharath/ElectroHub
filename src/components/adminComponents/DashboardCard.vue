@@ -1,5 +1,5 @@
 <script setup>
-const props = defineProps(['svg'])
+
 </script>
 <template>
   <div

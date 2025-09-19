@@ -7,6 +7,8 @@ import emailjs from '@emailjs/browser';
 export const useOrderStore = defineStore("order", () => {
   const auth = useAuthStore();
 
+  const isgetOrder = ref(false)
+  const errorGetOrder = ref(null)
 
   const isLoading = ref(false);
   const isSending = ref(false)
@@ -30,7 +32,22 @@ export const useOrderStore = defineStore("order", () => {
       isLoading.value = false;
     }
   }
-
+  // admin
+ async function getAllOrder() {
+    isgetOrder.value = true;
+    errorGetOrder.value = null;
+    try {
+      const res = await axios.get(`${api}/admin/orders`,{
+        headers: { Authorization: `Bearer ${auth.token}` },
+      });
+      return res.data;
+    } catch (err) {
+      console.log(err)
+      errorGetOrder.value = err.response?.data?.error || "get order failed";
+    } finally {
+      isgetOrder.value = false;
+    }
+  }
 
 
 
@@ -81,5 +98,5 @@ const sendOrder = async (orderData) => {
   }
 };
 
-  return {  createOrder,sendOrder, isLoading,error, isSending, errorSend };
+  return {  createOrder,sendOrder, isLoading,error, isSending, errorSend, isgetOrder,errorGetOrder, getAllOrder };
 });
