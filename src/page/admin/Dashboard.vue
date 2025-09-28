@@ -2,6 +2,7 @@
 import { onMounted, ref } from "vue";
 import { useDashboardStore } from "../../stores/dashboard";
 import StatsChart from "../../components/adminComponents/StatsChart.vue";
+import LoadingComponent from "../../components/globals/LoadingComponent.vue";
 
 const recent = {
   newUsersThisMonth: 2,
@@ -22,8 +23,11 @@ onMounted(async () => {
 </script>
 
 <template>
-  <!-- <div><i class="fa-solid fa-bars"></i></div> -->
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+  <div  v-if="dashboardStore.isLoading" class="max-w-screen h-[80vh] flex justify-center items-center">
+    <LoadingComponent />
+  </div>
+
+  <div v-else  class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
     <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
       <div class="flex items-center justify-between">
         <div>
@@ -192,8 +196,7 @@ onMounted(async () => {
   </div>
 
 <div class="w-full mt-3">
-    <StatsChart v-if="data?.recent" :recent="data?.recent"  />
+    <StatsChart v-if="data?.recent"  :recent="data?.recent"  />
 </div>
-
 
 </template>
