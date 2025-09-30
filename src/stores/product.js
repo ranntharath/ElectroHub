@@ -9,6 +9,7 @@ export const useProductStore = defineStore('product', ()=>{
     const response = ref({})
 
     const isLoading = ref(true)
+    const isAdding = ref(false)
     const isGetProductById = ref(false)
 
     const errorGetProductById = ref(null)
@@ -24,8 +25,10 @@ export const useProductStore = defineStore('product', ()=>{
             const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/products`)
             response.value = res.data
         }catch(err){
-            isError.value = err.error || "Failed to fetch products"
-        }finally{
+            isError.value = err.response?.data?.error || "something went wrong";
+            
+        }
+        finally{
             isLoading.value = false
         }
     }
@@ -38,7 +41,7 @@ export const useProductStore = defineStore('product', ()=>{
             const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/products/${id}`)
             return res.data
         }catch(err){
-            errorGetProductById.value = err.error || "Failed to fetch products"
+            errorGetProductById.value = err.response?.data?.error || "something went wrong";
         }finally{
             isGetProductById.value = false
         }
@@ -46,19 +49,21 @@ export const useProductStore = defineStore('product', ()=>{
     }
 
     async function addNewProduct(product) {
-        isLoading.value = true
+        isAdding.value = true
         isError.value = null
 
         try{
             const res  = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/products`,product,{
                 headers:{Authorization:`Bearer ${auth.token}`}
             })
-            products.value.push(res.data)
+            
+            return res.data
         }catch(err){
-            isError.value = err.error || "Add new product failed"
+            console.log(err)
+            isError.value =err.response?.data?.error || "something went wrong";
         }finally{
-            isLoading.value = false
+            isAdding.value = false
         }
     }
-    return {isError,isLoading,response,getAllProduct,getProductById, addNewProduct, isGetProductById,errorGetProductById}
+    return {isAdding,isError,isLoading,response,getAllProduct,getProductById, addNewProduct, isGetProductById,errorGetProductById}
 })

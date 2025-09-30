@@ -7,6 +7,7 @@ export const useDashboardStore = defineStore('dashboard',()=>{
     const auth = useAuthStore()
     const isLoading = ref(false)
     const error = ref(null)
+    const data = ref({})
 
     const api = import.meta.env.VITE_BACKEND_URL;
     async function getDashboard() {
@@ -20,6 +21,7 @@ export const useDashboardStore = defineStore('dashboard',()=>{
             const res = await axios.get(`${api}/admin/dashboard`,{
                 headers:{Authorization:`Bearer ${auth.token}`}
             })
+            data.value = res.data
             return res.data
         }catch(err){
             error.value = err.response?.data?.error || "get dashboard failed";
@@ -28,5 +30,5 @@ export const useDashboardStore = defineStore('dashboard',()=>{
         }
 
     }
-    return {error,isLoading,getDashboard}
+    return {error,isLoading,getDashboard, data}
 })

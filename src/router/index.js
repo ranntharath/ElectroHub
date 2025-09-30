@@ -54,9 +54,10 @@ const routes = [
     path: '/admin',
     component: AdminLayout,
     children: [
-      { path: '', name: 'Dashboard', component: Dashboard },
+      { path: '', name: 'Dashboard', component: ()=>import('../page/admin/dashboard.vue') },
       { path: 'users', name: 'Users', component: User },
-      { path: 'orders', name: 'Orders', component: Order }
+      { path: 'orders', name: 'Orders', component: Order },
+      { path: 'products', name: 'Orders', component: ()=>import('../page/admin/Product.vue') },
     ],
   },
 

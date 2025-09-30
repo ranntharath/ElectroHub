@@ -4,19 +4,16 @@ import { useDashboardStore } from "../../stores/dashboard";
 import StatsChart from "../../components/adminComponents/StatsChart.vue";
 import LoadingComponent from "../../components/globals/LoadingComponent.vue";
 
-const recent = {
-  newUsersThisMonth: 2,
-  ordersThisMonth: 66,
-  revenueThisMonth: 646,
-  ordersThisWeek: 2,
-  revenueThisWeek: 0,
-  ordersToday: 11,
-  revenueToday: 646,
-};
+
 const dashboardStore = useDashboardStore();
-const data = ref({});
+
 onMounted(async () => {
-  data.value = await dashboardStore.getDashboard();
+  if(Object.keys(dashboardStore.data).length===0){
+   await dashboardStore.getDashboard();
+  }else{
+    return
+  }
+
   
 });
 
@@ -33,7 +30,7 @@ onMounted(async () => {
         <div>
           <p class="text-sm font-medium text-gray-600">Total Revenue</p>
           <p class="text-2xl font-bold text-gray-900">
-            ${{ data?.overview?.totalRevenue }}
+            ${{ dashboardStore?.data?.overview?.totalRevenue }}
           </p>
         </div>
         <div class="p-3 rounded-full bg-green-100">
@@ -60,7 +57,7 @@ onMounted(async () => {
         <path d="m22 7-8.5 8.5-5-5L2 17"></path>
       </svg> -->
         <span class="text-sm text-green-600"
-          >${{ data?.recent?.revenueThisMonth }}</span
+          >${{ dashboardStore?.data?.recent?.revenueThisMonth }}</span
         >
         <span class="text-sm text-gray-500 ml-1">This month</span>
       </div>
@@ -71,7 +68,7 @@ onMounted(async () => {
         <div>
           <p class="text-sm font-medium text-gray-600">Total Users</p>
           <p class="text-2xl font-bold text-gray-900">
-            {{ data?.overview?.totalUsers }}
+            {{ dashboardStore?.data?.overview?.totalUsers }}
           </p>
         </div>
         <div class="p-3 rounded-full bg-blue-100">
@@ -100,7 +97,7 @@ onMounted(async () => {
         <path d="m22 7-8.5 8.5-5-5L2 17"></path>
       </svg> -->
         <span class="text-sm text-green-600">{{
-          data?.recent?.newUsersThisMonth
+          dashboardStore?.data?.recent?.newUsersThisMonth
         }}</span>
         <span class="text-sm text-gray-500 ml-1">This month</span>
       </div>
@@ -111,7 +108,7 @@ onMounted(async () => {
         <div>
           <p class="text-sm font-medium text-gray-600">Total Orders</p>
           <p class="text-2xl font-bold text-gray-900">
-            {{ data?.overview?.totalOrders }}
+            {{ dashboardStore?.data?.overview?.totalOrders }}
           </p>
         </div>
         <div class="p-3 rounded-full bg-orange-100">
@@ -141,7 +138,7 @@ onMounted(async () => {
         <path d="m22 17-8.5-8.5-5 5L2 7"></path>
       </svg> -->
         <span class="text-sm text-green-600">{{
-          data?.recent?.ordersThisMonth
+          dashboardStore?.data?.recent?.ordersThisMonth
         }}</span>
         <span class="text-sm text-gray-500 ml-1">This month</span>
       </div>
@@ -152,7 +149,7 @@ onMounted(async () => {
         <div>
           <p class="text-sm font-medium text-gray-600">Total Products</p>
           <p class="text-2xl font-bold text-gray-900">
-            {{ data?.overview?.totalProducts }}
+            {{ dashboardStore?.data?.overview?.totalProducts }}
           </p>
         </div>
         <div class="p-3 rounded-full bg-purple-100">
@@ -196,7 +193,7 @@ onMounted(async () => {
   </div>
 
 <div class="w-full mt-3">
-    <StatsChart v-if="data?.recent"  :recent="data?.recent"  />
+    <StatsChart v-if="dashboardStore?.data?.recent"  :recent="dashboardStore?.data?.recent"  />
 </div>
 
 </template>

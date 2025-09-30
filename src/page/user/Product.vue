@@ -30,9 +30,13 @@ const isFilter = ref(true);
 // Fetch products on mount
 onMounted(async () => {
   if(!productStore.response?.products){
-   productStore.getAllProduct();
+   await productStore.getAllProduct();
+
   }
 });
+watchEffect(()=>{
+   console.log(productStore.isLoading)
+})
 // const products = computed(() => productStore.response.products );
 
 // Filtered products

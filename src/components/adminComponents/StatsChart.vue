@@ -76,7 +76,7 @@ const chartOptions = {
 <template>
   <div class="w-full h-96 flex items-center justify-center">
     <!-- show spinner or loading text -->
-    <!-- <LoadingComponent v-if="isLoading"/> -->
+    <LoadingComponent v-if="isLoading"/>
     <!-- show chart only when data ready -->
     <Bar :data="chartData" :options="chartOptions" />
   </div>
