@@ -2,7 +2,6 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import { useUserStore } from '../../stores/user';
-import LoadingComponent from '../../components/globals/LoadingComponent.vue'
 import ComfirmDialog from '../../components/globals/ComfirmDialog.vue';
 const userStore = useUserStore()
 
@@ -11,7 +10,6 @@ const showConfirm = ref(false)
 
 onMounted(async()=>{
     await userStore.getAllUser()
-    console.log(userStore?.user.stats[0]?.count)
 })
 function handleDelete() {
   showConfirm.value = false

@@ -119,10 +119,10 @@ async function addProducthandle() {
           required
         >
           <option value="" selected disabled>Choose category</option>
-          <option value="men">Men</option>
-          <option value="women">Women</option>
-          <option value="home">Home</option>
-          <option value="electronics">Electronics</option>
+          <option value="phone">Phone</option>
+          <option value="laptop">Laptop</option>
+          <option value="desktop">Desktop</option>
+          <option value="monitor">Monitor</option>
         </select>
       </div>
 
