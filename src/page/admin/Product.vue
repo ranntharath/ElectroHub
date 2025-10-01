@@ -1,43 +1,88 @@
 <script setup>
-import { onMounted, ref, watch, watchEffect } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { useProductStore } from "../../stores/product";
 import AddProductForm from "../../components/adminComponents/AddProductForm.vue";
+import ComfirmDialog from "../../components/globals/ComfirmDialog.vue";
+import { useToast } from "vue-toastification";
+import EditProductForm from "../../components/adminComponents/EditProductForm.vue";
 
 const productStore = useProductStore();
 const showForm = ref(false);
 const search = ref("");
 const productShow = ref([]);
-const category = ref('all')
-// watchEffect(() => {
-//   if (search.value === "") {
-//     productShow.value = productStore.response?.products;
-//   }
-// });
-watch(()=>category.value, ()=>{
-  console.log(category.value)
-})
+const category = ref("all");
+
+const showConfirmDelete = ref(false)
+const showEditForm = ref(false)
+
+const deleteId = ref(null)
+const editId = ref(null)
+
+const editProduct = ref({})
+
+const toast = useToast()
 onMounted(async () => {
-  await productStore.getAllProduct();
+    if(!productStore.response?.products){
+   await productStore.getAllProduct();
+
+  }
   productShow.value = productStore.response?.products;
 });
+
 function filterProducts() {
   productShow.value = productStore.response?.products?.filter((e) => {
     const matchedSearch =
       search.value === ""
         ? true
         : e.name.toLowerCase().includes(search.value.toLowerCase());
-    const matchedCategory = category.value === "all" ? true : e.category == category.value
-    return matchedSearch && matchedCategory
+    const matchedCategory =
+      category.value === "all" ? true : e.category == category.value;
+    return matchedSearch && matchedCategory;
   });
 }
+
+function comfirmDeleteId(id){
+  deleteId.value = id
+  showConfirmDelete.value = true
+}
+function openEditForm(product){
+  editProduct.value = {...product}
+  console.log(editProduct)
+  showEditForm.value = true
+}
+
+async function deleteProducthandle(){
+  if(!deleteId.value) return
+  const response = await productStore.deleteProduct(deleteId.value);
+
+  if(!response){
+    toast.error(productStore.errorDelete, { timeout: 2000 })
+    
+  }
+  showConfirmDelete.value = false
+    await productStore.getAllProduct()
+  
+}
+
+watch([() => productStore.response, search, category], () => filterProducts());
+
 </script>
 <template>
+  <!-- edit product form -->
+   <div v-if="showEditForm" class="absolute  overflow-auto inset-0 z-50 flex items-center justify-center bg-black/50">
+<EditProductForm  :show="showEditForm" @cancel="showEditForm = false" :product="editProduct" />
+   </div>
+   
+  <!-- comfirm dialog -->
+  <ComfirmDialog title="Delete Product" message="Are you sure ?" :show="showConfirmDelete" @cancel="showConfirmDelete=false" @confirm="deleteProducthandle" />
+  <!-- add product form -->
   <div
     v-if="showForm"
     class="absolute overflow-auto inset-0 z-50 flex items-center justify-center bg-black/50"
   >
     <AddProductForm :show="showForm" @cancel="showForm = false" />
   </div>
+  <!-- content -->
   <div class="flex justify-between items-center">
     <h3 class="text-2xl text-color-text font-semibold">Product List</h3>
     <button
@@ -58,14 +103,14 @@ function filterProducts() {
           class="px-4 py-1.5 rounded-lg border border-gray-300 focus:border-slate-300 focus:ring-2 focus:ring-slate-200 outline-none transition-all duration-200 flex-1"
         />
         <button
-          @click="filterProducts"
           class="px-4 py-1.5 bg-primary-color text-white rounded-lg hover:bg-primary-color/90 transition"
         >
           Search
         </button>
       </div>
       <div class="flex justify-center items-center gap-2">
-        <select v-model="category" @click="filterProducts"
+        <select
+          v-model="category"
           class="border border-slate-300 p-1.5 rounded-md focus:ring-0 outline-0"
         >
           <option value="all" selected>All</option>
@@ -136,7 +181,7 @@ function filterProducts() {
         </tr>
       </thead>
       <tbody class="divide-y divide-gray-200">
-        <tr v-for="pro in productShow">
+        <tr v-for="pro in productShow" :key="pro?._id">
           <td class="text-left py-3 px-6 text-color-text">
             <div class="flex items-center">
               <img
@@ -157,7 +202,7 @@ function filterProducts() {
             {{ pro?.stock }}
           </td>
           <td class="py-4 px-6 flex items-center">
-            <button
+            <button @click="openEditForm(pro)"
               data-v-_v0_vue_=""
               class="p-1.5 hover:bg-muted rounded-md transition-colors"
               title="Edit"
@@ -180,7 +225,7 @@ function filterProducts() {
             </button>
             <!-- <button class="p-1.5"><i class="fa-solid fa-check text-xs text-green-500"></i></button> -->
             <button
-              @click="showConfirm = true"
+              @click="comfirmDeleteId(pro?._id)"
               data-v-_v0_vue_=""
               class="p-1.5 hover:bg-muted rounded-md transition-colors"
               title="Delete"

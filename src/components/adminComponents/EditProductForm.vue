@@ -1,53 +1,49 @@
 <script setup>
-import { ref } from "vue";
-import { useProductStore } from "../../stores/product";
-import { useToast } from "vue-toastification";
+import { onMounted, ref, watch, watchEffect } from 'vue';
+import { useProductStore } from '../../stores/product';
 
 const props = defineProps({
   show: Boolean,
+  product:Object
 });
 const emit = defineEmits(["cancel"])
-const toast = useToast();
-const productStore = useProductStore();
-const images = ref([""]);
-const productData = ref({
-  name: "",
-  description: "",
-  price: "",
-  category: "",
-  stock: "",
-  images: images.value,
-  brand: "",
-});
-function handleImage() {
-  if (images.value.length < 4) {
-    images.value.push("");
-  }
-}
+
+const productStore = useProductStore()
+const productData = ref({});
+const images = ref([])
+
 function removeImage(index){
   if(images.value.length > 1){
     images.value.splice(index,1)
   }
-}
-async function addProducthandle() {
-   if (productStore.isLoading) return 
-  const response = await productStore.addNewProduct(productData.value);
 
-  if (!response || productStore.isError) {
-    console.log(response)
-    toast.error(productStore.isError, { timeout: 2000 });
-    return;
-  } 
-    emit('cancel')
-    await productStore.getAllProduct();
-  
 }
+function addImage() {
+  if (images.value.length < 4) {
+    images.value.push("");
+  }
+}
+watchEffect(()=>{
+    productData.value = {...props.product}
+   images.value= productData.value?.images
+    console.log(productData.value)  
+})
+
+async function saveEdit(){
+    const response = await productStore.editProduct(productData.value?._id,productData.value)
+    if(response){
+        emit('cancel')
+        await productStore.getAllProduct()
+    }
+
+}
+
 </script>
 <template>
   <div v-if="show" class="inset-0 z-50 flex items-center justify-center">
-    <form @submit.prevent="addProducthandle" class="bg-white rounded-2xl shadow p-6 space-y-5">
+    <form @submit.prevent="saveEdit" class="bg-white rounded-2xl shadow p-6 space-y-5">
       <div class="flex justify-between items-center">
-        <h2 class="text-2xl font-bold text-slate-800">Add New Product</h2>
+        <h2 class="text-2xl font-bold text-slate-800">Edit Product</h2>
         <p @click="$emit('cancel')" class="text-2xl cursor-pointer">x</p>
       </div>
 
@@ -146,7 +142,7 @@ async function addProducthandle() {
           >
           <button
           type="button"
-            @click="handleImage"
+            @click="addImage"
             class="p-1.5 py-0.5 bg-primary-color text-white rounded-md text-sm"
           >
             + add
@@ -175,13 +171,22 @@ async function addProducthandle() {
       </div>
 
       <!-- Submit -->
+      <div class="flex gap-4 items-center">
+        <button @click="$emit('cancel')"
+        type="button"
+        class="w-full bg-gray-400 text-white py-2 px-4 rounded-xl hover:bg-slate-500 transition"
+      >
+      Cancel
+        
+      </button>
       <button 
         type="submit"
         class="w-full bg-indigo-600 text-white py-2 px-4 rounded-xl hover:bg-indigo-700 transition"
       >
-      {{ productStore.isAdding? 'Add ...' : 'Add Product'}}
+      {{ productStore.isEdit? 'Edit...' : 'Save'}}
         
       </button>
+      </div>
     </form>
   </div>
 </template>

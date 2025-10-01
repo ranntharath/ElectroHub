@@ -22,6 +22,7 @@ export const useUserStore = defineStore("user", () => {
         headers: { Authorization: `Bearer ${auth.token}` },
       });
       user.value = res.data
+      console.log(user.value)
       return res.data
     } catch (err) {
         errUser.value = err.response?.data?.error || "something went wrong";

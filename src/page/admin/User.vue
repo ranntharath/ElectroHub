@@ -9,7 +9,10 @@ const userStore = useUserStore()
 const showConfirm = ref(false)
 
 onMounted(async()=>{
-    await userStore.getAllUser()
+
+await userStore.getAllUser()
+
+    
 })
 function handleDelete() {
   showConfirm.value = false
