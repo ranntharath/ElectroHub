@@ -52,7 +52,7 @@ const routes = [
     path: '/admin',
     component: AdminLayout,
     children: [
-      { path: 'dashboard', name: 'Dashboard', component: ()=>import('../page/admin/dashboard.vue') },
+      { path: 'dashboard', name: 'Dashboard', component: ()=>import('../page/admin/Dashboard.vue') },
       { path: 'users', name: 'Users', component: User },
       { path: 'orders', name: 'Orders', component: ()=>import('../page/admin/Order.vue') },
       { path: 'products', name: 'Products', component: ()=>import('../page/admin/Product.vue') },
