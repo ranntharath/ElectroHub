@@ -101,9 +101,8 @@ const props = defineProps([
         {{ name }}
       </h3>
       <h3 class="text-color-text line-clamp-1">{{ description }}</h3>
-      <!-- <p class="text-yellow-500">☆☆☆☆☆ (93)</p> -->
       <p class="font-bold text-primary-color">
-        ${{ price }} <span class="line-through text-gray-400">$119.99</span>
+        ${{ price }}
       </p>
     </div>
   </div>

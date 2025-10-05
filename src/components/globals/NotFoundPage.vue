@@ -5,7 +5,7 @@
 
     <!-- Message -->
     <p class="mt-4 text-2xl font-semibold text-color-text">
-      Oops! The page you’re looking for doesn’t exist.
+      Oops! The page you're looking for doesn’t exist.
     </p>
     <p class="mt-2 text-lg text-secondary-color">
       It might have been moved or deleted.

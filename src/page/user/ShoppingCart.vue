@@ -11,6 +11,7 @@ const orderStore = useOrderStore();
 
 const getUserCart = ref({});
 const orderData = ref({
+  id:"",
   shippingAddress: {
     city: "",
     email: "",
@@ -34,6 +35,8 @@ async function HandlecreateOrder(e) {
   try {
     const order = await orderStore.createOrder(orderData.value);
     if (order && order.order) {
+      orderData.value.id = order.order._id
+
       orderData.value.items = order.order.items;
       orderData.value.totalAmount = order.order.totalAmount;
       const send = await orderStore.sendOrder(orderData.value);

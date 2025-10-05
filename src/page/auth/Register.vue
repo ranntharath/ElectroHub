@@ -31,6 +31,16 @@ import { useToast } from 'vue-toastification';
       console.log("Register : " ,submit.error);
     }
   }
+
+  function togglePassword() {
+  const password = document.getElementById("password");
+  console.log(password.type)
+  if(password.type  == "password"){
+    password.type = "text"
+  }else{
+    password.type = "password"
+  }
+}
 </script>
 
 <template>
@@ -115,7 +125,7 @@ import { useToast } from 'vue-toastification';
               v-model="userData.cPassword"
               placeholder="Password"
               autocomplete="new-password"
-              class="w-full px-4 py-3 border border-gray-300 rounded-lg outline-0 focus:ring-2 focus:ring-primary-color focus:border-primary-color transition-colors duration-200 text-gray-900 placeholder-gray-500 pr-12"
+              class=" w-full px-4 py-3 border border-gray-300 rounded-lg outline-0 focus:ring-2 focus:ring-primary-color focus:border-primary-color transition-colors duration-200 text-gray-900 placeholder-gray-500 pr-12"
             />
             <button
               type="button"

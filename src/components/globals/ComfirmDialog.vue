@@ -40,7 +40,7 @@ defineProps({
         </button>
         <button @click="$emit('confirm')"
           class="px-4 py-2 rounded-xl bg-red-500 text-white hover:bg-red-600 transition">
-          Yes, Delete
+          Yes
         </button>
       </div>
     </div>

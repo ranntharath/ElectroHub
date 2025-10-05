@@ -12,8 +12,6 @@ import { useAuthStore } from "../stores/auth";
 import { useToast } from "vue-toastification";
 import AdminLayout from "../layouts/AdminLayout.vue";
 import User from "../page/admin/User.vue";
-import Order from "../page/admin/Order.vue";
-import Dashboard from "../page/admin/dashboard.vue";
 
 const toast = useToast()
 const routes = [
@@ -54,10 +52,10 @@ const routes = [
     path: '/admin',
     component: AdminLayout,
     children: [
-      { path: '', name: 'Dashboard', component: ()=>import('../page/admin/dashboard.vue') },
+      { path: 'dashboard', name: 'Dashboard', component: ()=>import('../page/admin/dashboard.vue') },
       { path: 'users', name: 'Users', component: User },
-      { path: 'orders', name: 'Orders', component: Order },
-      { path: 'products', name: 'Orders', component: ()=>import('../page/admin/Product.vue') },
+      { path: 'orders', name: 'Orders', component: ()=>import('../page/admin/Order.vue') },
+      { path: 'products', name: 'Products', component: ()=>import('../page/admin/Product.vue') },
     ],
   },
 
@@ -70,27 +68,44 @@ const router = createRouter({
   history: createWebHistory(),
   routes,
   scrollBehavior(to, from, savedPosition) {
-    // Always scroll to top on navigation
     return { top: 0 }
   },
 });
 
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
-  const isLoggedIn = authStore.token  // or however your store tracks login
+  const isLoggedIn = !!authStore.token
+  const role = authStore.user?.role?.toLowerCase() // normalize
 
-  // If user is logged in and tries to access auth pages
+  // Redirect logged-in users from auth pages
   if (isLoggedIn && to.path.startsWith("/auth")) {
-    return next({ path: "/" }) // redirect to home
+    if (role === "admin") return next({ path: "/admin/dashboard" })
+    return next({ path: "/" })
   }
 
-  // If user is not logged in and tries to access protected routes
-  const protectedPaths = ["/users/profile", "/cart"] 
+
+    if (to.path === "/") {
+      if (isLoggedIn) {
+        if (role === "admin") return next({ path: "/admin/dashboard" })
+        return next() // normal user sees home
+      }
+      return next() // guest sees home
+    }
+
+  // Protect user routes
+  const protectedPaths = ["/users/profile", "/cart"]
   if (!isLoggedIn && protectedPaths.includes(to.path)) {
-   toast.warning("You must login first")
-  if (from.path === "/") return next({ path: "/" }) // no previous route
-  return next(false)
+    toast.warning("You must login first")
+    return next({ path: "/auth/login", query: { redirect: to.fullPath } })
   }
+
+  // Protect admin routes
+  const adminPaths = ["/admin", "/admin/dashboard"]
+  if (role !== "admin" && adminPaths.includes(to.path)) {
+    return next({ path: "/" })
+  }
+
   next()
 })
+
 export default router;

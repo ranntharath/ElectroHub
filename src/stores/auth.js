@@ -43,7 +43,7 @@ export const useAuthStore = defineStore('auth',()=>{
             localStorage.setItem('token',token.value)
             return true
         }catch(err){
-            error.value = err.error || 'Login Failed'
+            error.value = err.response?.data?.error || 'Login Failed'
             return false
         }finally{
             isLoading.value = false

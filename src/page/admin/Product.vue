@@ -117,7 +117,7 @@ watch([() => productStore.response, search, category], () => filterProducts());
           <option value="phone">Phone</option>
           <option value="laptop">Laptop</option>
           <option value="desktop">Desktop</option>
-          <option value="monitor">Monitor</option>
+          <option value="hardware">Hardware</option>
         </select>
         <button
           class="flex justify-center items-center bg-white text-color-text border border-gray-200 px-5 py-1 rounded-sm hover:bg-secondary-color hover:text-white hover:border-secondary-color transition-all ease-in-out duration-200"

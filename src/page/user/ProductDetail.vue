@@ -200,9 +200,9 @@ const related = computed(() => {
           Related products  
         </h3>
         <div
-          class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5"
+          class=" grid grid-rows-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mt-10 md:mx-20 lg:mx-16"
         >
-        <RouterLink  v-for="pro in related.slice(0, 5)"
+        <RouterLink  v-for="pro in related.slice(0, 4)"
             :key="pro.id" :to="`/product/${pro._id}`">
           <ProductCard
            

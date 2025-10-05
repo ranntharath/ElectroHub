@@ -7,10 +7,10 @@ import ProductLoading from "../../components/ProductPageComponents/ProductLoadin
 
 // Filter options
 const categories = [
-  { label: "electronics", value: "electronics" },
-  { label: "men", value: "men" },
-  { label: "women", value: "women" },
-  { label: "jewelery", value: "jewelery" },
+  { label: "Phone", value: "phone" },
+  { label: "Laptop", value: "laptop" },
+  { label: "Desktop", value: "desktop" },
+  { label: "Hardware", value: "hardware" },
 ];
 
 const brands = [
@@ -114,7 +114,6 @@ const filterProducts = computed(() => {
         </div>
       </div>
       <div class="lg:col-span-3">
-        <p class="text-color-text my-2">Show 8 products</p>
         <div class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
           <ProductLoading v-if="productStore.isLoading" v-for="n in 4"/>
           <RouterLink v-else  v-for="pro in filterProducts" :key="pro.id" :to="`/product/${pro._id}`" >
@@ -127,7 +126,6 @@ const filterProducts = computed(() => {
             :image="pro.images[0]"
             :price="pro.price"
             :category="pro.category"
-            tag="new"
           />
           </RouterLink>
           

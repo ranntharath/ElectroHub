@@ -6,12 +6,15 @@ import emailjs from '@emailjs/browser';
 
 export const useOrderStore = defineStore("order", () => {
   const auth = useAuthStore();
+  const order = ref({})
 
   const isgetOrder = ref(false)
   const errorGetOrder = ref(null)
-
+  const isUpdate =ref(false)
   const isLoading = ref(false);
   const isSending = ref(false)
+
+  const errorUpdate = ref(null)
   const errorSend = ref(null)
   const error = ref(null);
   
@@ -40,16 +43,30 @@ export const useOrderStore = defineStore("order", () => {
       const res = await axios.get(`${api}/admin/orders`,{
         headers: { Authorization: `Bearer ${auth.token}` },
       });
+      order.value = res.data
       return res.data;
     } catch (err) {
-      console.log(err)
       errorGetOrder.value = err.response?.data?.error || "get order failed";
     } finally {
       isgetOrder.value = false;
     }
   }
 
+async function updateOrderStatue(id,paymentStatus) {
 
+  isUpdate.value = false
+  errorUpdate.value = null
+  try{
+    const res = await axios.put(`${api}/orders/${id}`,{paymentStatus},{headers:{Authorization:`Bearer ${auth.token}`}})
+    return res.data
+  }catch(err){
+  
+    errorUpdate.value = err.response?.data?.error || "something went wrong";
+  }finally{
+    isUpdate.value  = false
+  }
+  
+}
 
 
 const sendOrder = async (orderData) => {
@@ -58,7 +75,7 @@ const sendOrder = async (orderData) => {
   const EMAIL_PUBLIC_KEY = import.meta.env.VITE_EMAIL_PUBLIC_KEY
   try {
     isSending.value =true
-    // Convert items to HTML
+
     const itemsHTML = orderData.items
       .map(
         (item) => `
@@ -74,6 +91,7 @@ const sendOrder = async (orderData) => {
       .join("");
 
     const templateParams = {
+      id:orderData?.id,
       name: orderData?.shippingAddress?.name,
       email: orderData?.shippingAddress?.email,
       city: orderData?.shippingAddress?.city,
@@ -98,5 +116,5 @@ const sendOrder = async (orderData) => {
   }
 };
 
-  return {  createOrder,sendOrder, isLoading,error, isSending, errorSend, isgetOrder,errorGetOrder, getAllOrder };
+  return {order,  createOrder,sendOrder, isLoading,error, isSending, errorSend, isgetOrder,errorGetOrder,isUpdate,errorUpdate, getAllOrder, updateOrderStatue };
 });

@@ -1,11 +1,16 @@
 <script setup>
-import { computed, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import ProductCard from "../../components/ProductPageComponents/ProductCard.vue";
-import products from "../../json/products.json";
+import { useProductStore } from "../../stores/product";
 
-const pros = ref(products);
-const bestSell = computed(() => pros.value.filter((e) => e.tag == "best sale"));
 
+const productStore = useProductStore()
+onMounted(async()=>{
+  if(!productStore.response?.products){
+   await productStore.getAllProduct();
+
+  }
+})
 
 </script>
 <template>
@@ -66,29 +71,30 @@ const bestSell = computed(() => pros.value.filter((e) => e.tag == "best sale"));
     </div>
   </section>
   <section class="section text-center mt-16">
-    <h2 class="text-color-text font-bold">Best Seller</h2>
+    <h2 class="font-bold text-primary-color">lastest Products</h2>
     <p class="text-color-text mt-3">
       Discover our handpicked selection of premium products that combine style,
       functionality, and sustainability.
     </p>
-    <div class="grid grid-rows-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mt-10">
+    <div class="grid grid-rows-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mt-10 md:mx-20 lg:mx-16">
       <!-- card -->
-      <ProductCard
-        v-for="pro in bestSell.slice(0, 4)"
-        :key="pro.id"
-        :id="pro.id"
-        :title="pro.title"
-        :category="pro.category"
-        :tag="pro.tag"
-        :image="pro.secondimage[0]"
-        :price="pro.price"
-        :rate="pro.rating.rate"
-      />
+      <RouterLink   v-for="pro in productStore.response?.products?.slice(0,4)" :to="`/product/${pro._id}`" >
+            <ProductCard 
+           
+            
+            :id="pro._id"
+            :name="pro.name"
+            :description="pro.description"
+            :image="pro.images[0]"
+            :price="pro.price"
+            :category="pro.category"
+          />
+          </RouterLink>
     </div>
     <button
       class="mt-16 bg-white text-color-text shadow-md border border-gray-200 px-5 py-2 rounded-sm hover:bg-secondary-color hover:text-white hover:border-secondary-color transition-all ease-in-out duration-200"
     >
-      <RouterLink to="/product">View Collection</RouterLink>
+      <RouterLink to="/product">See All</RouterLink>
     </button>
   </section>
 </template>
