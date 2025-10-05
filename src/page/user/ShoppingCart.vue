@@ -1,6 +1,6 @@
 <script setup>
-import { computed, onMounted, ref, watch } from "vue";
-import CartProduct from "../../components/CartPageComponents/cartProduct.vue";
+import { computed, ref, watch } from "vue";
+import CartProduct from "../../components/CartPageComponents/CartProduct.vue";
 import { useCartStore } from "../../stores/cart";
 import { useOrderStore } from "../../stores/order";
 import { useToast } from "vue-toastification";
