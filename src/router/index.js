@@ -6,7 +6,7 @@ import Contact from "../page/user/Contact.vue";
 import NotFoundPage from "../components/globals/NotFoundPage.vue";
 import ShoppingCart from "../page/user/ShoppingCart.vue";
 import Login from "../page/auth/Login.vue";
-import Register from "../page/auth/register.vue";
+import Register from "../page/auth/Register.vue";
 import AuthLayout from "../layouts/AuthLayout.vue";
 import { useAuthStore } from "../stores/auth";
 import { useToast } from "vue-toastification";
