@@ -71,27 +71,29 @@ async function updateOrderStatue(id,paymentStatus) {
 
 const sendOrder = async (orderData) => {
   const EMAIL_SERVICE_ID = import.meta.env.VITE_EMAIL_SERVICE_ID
-  const EMAIL_TEMPLATE_ID = import.meta.env.VITE_EMAIL_TEMPLATE_ID
+  const EMAIL_TEMPLATE_ID = import.meta.env.VITE_EMAIL_TEMPLATE_ID     // admin
+  const EMAIL_AUTOREPLY_ID = import.meta.env.VITE_EMAIL_AUTOREPLY_ID   // auto reply
   const EMAIL_PUBLIC_KEY = import.meta.env.VITE_EMAIL_PUBLIC_KEY
+
   try {
-    isSending.value =true
+    isSending.value = true
 
     const itemsHTML = orderData.items
       .map(
         (item) => `
-         <div style="margin-bottom: 10px;">
-        <img src="${item.images[0]}" alt="${item.productId}" width="100" style="display:block; margin-bottom:5px;"/>
-        <strong>${item.productId}</strong><br/>
-        Quantity: ${item.quantity}<br/>
-        Price: $${item.price}<br/>
-        Total Price : $${item.price * item.quantity}<br/>
-      </div>
-    `
+          <div style="margin-bottom: 10px;">
+            <img src="${item.images[0]}" alt="${item.productId}" width="100" style="display:block; margin-bottom:5px;"/>
+            <strong>${item.productId}</strong><br/>
+            Quantity: ${item.quantity}<br/>
+            Price: $${item.price}<br/>
+            Total Price : $${item.price * item.quantity}<br/>
+          </div>
+        `
       )
       .join("");
 
     const templateParams = {
-      id:orderData?.id,
+      id: orderData?.id,
       name: orderData?.shippingAddress?.name,
       email: orderData?.shippingAddress?.email,
       city: orderData?.shippingAddress?.city,
@@ -100,21 +102,31 @@ const sendOrder = async (orderData) => {
       items: itemsHTML,
     };
 
-    const result = await emailjs.send(
+    // 1) Send order details to admin
+    await emailjs.send(
       EMAIL_SERVICE_ID,
       EMAIL_TEMPLATE_ID,
       templateParams,
       EMAIL_PUBLIC_KEY
     );
-    return result
-    
+
+    // 2) Auto-reply to customer
+    await emailjs.send(
+      EMAIL_SERVICE_ID,
+      EMAIL_AUTOREPLY_ID,
+      templateParams,
+      EMAIL_PUBLIC_KEY
+    );
+
+    return true
   } catch (err) {
     console.error("Error sending order:", err);
     errorSend.value = err
-  }finally{
+  } finally {
     isSending.value = false
   }
 };
+
 
   return {order,  createOrder,sendOrder, isLoading,error, isSending, errorSend, isgetOrder,errorGetOrder,isUpdate,errorUpdate, getAllOrder, updateOrderStatue };
 });

@@ -39,11 +39,6 @@ onMounted(async()=>{
             Shop Now
           </button>
           </RouterLink>
-          <button 
-            class="w-full md:w-fit bg-white text-color-text shadow-md border border-gray-200 px-5 py-2 rounded-sm hover:bg-secondary-color hover:text-white hover:border-secondary-color transition-all ease-in-out duration-200"
-          >
-            View Collection
-          </button>
         </div>
         <div class="flex justify-start items-center gap-5 mt-20">
           <div>
@@ -70,7 +65,7 @@ onMounted(async()=>{
       </div>
     </div>
   </section>
-  <section class="section text-center mt-16">
+  <section class="section text-center mt-8">
     <h2 class="font-bold text-primary-color">lastest Products</h2>
     <p class="text-color-text mt-3">
       Discover our handpicked selection of premium products that combine style,

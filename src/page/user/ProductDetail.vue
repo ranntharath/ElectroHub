@@ -144,7 +144,7 @@ const related = computed(() => {
           </div>
           <div class="flex items-center gap-3">
             <button @click="handleAddToCart"
-              class="bg-primary-color w-full hover:bg-primary-color/90 text-white px-5 py-2 rounded-md"
+              class="cursor-pointer bg-primary-color w-full hover:bg-primary-color/90 text-white px-5 py-2 rounded-md"
             >
               Add to cart
             </button>
@@ -195,7 +195,7 @@ const related = computed(() => {
       </div>
 
       <!-- Related products -->
-      <div class="mt-16">
+      <div v-if="related.length != 0" class="mt-16">
         <h3 class="text-2xl md:text-4xl font-semibold mb-4 text-color-text">
           Related products  
         </h3>

@@ -41,11 +41,11 @@ async function HandlecreateOrder(e) {
       orderData.value.totalAmount = order.order.totalAmount;
       const send = await orderStore.sendOrder(orderData.value);
       if (send) { 
-        toast.success("Sent to email", { timeout: 2000 });
+        toast.success("Sent to email", { timeout: 1000 });
       }
       setTimeout(() => {
         window.location.reload();
-      }, 2100);
+      }, 700);
     } else {
       alert("Order creation failed. Please try again.");
     }
@@ -165,7 +165,7 @@ async function HandlecreateOrder(e) {
             @click="HandlecreateOrder"
             class="bg-primary-color hover:bg-primary-color/90 text-white px-5 py-2 rounded-md w-full"
           >
-            {{ orderStore.isSending ? "Send...." : "Order and send to Email" }}
+            {{ orderStore.isLoading || orderStore.isSending ? "Send...." : "Order and send to Email" }}
           </button>
         </form>
       </div>
